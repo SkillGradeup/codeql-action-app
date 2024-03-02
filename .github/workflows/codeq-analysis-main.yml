@@ -28,6 +28,13 @@ jobs:
         language: [ 'javascript-typescript' ]
 
     steps:
+    - name: Check if docs directory modified
+      run: |
+        if git diff --quiet HEAD^ HEAD -- docs; then
+          echo "Skipping analysis as only docs directory modified"
+          exit 0
+        fi
+
     - name: Checkout repository
       uses: actions/checkout@v4
 
