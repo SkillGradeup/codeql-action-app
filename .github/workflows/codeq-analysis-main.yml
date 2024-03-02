@@ -13,11 +13,11 @@ name: "CodeQL_Main"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main","paths" ]
     paths:
       - "docs/**"
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main","paths" ]
     paths:
       - "docs/**"
   schedule:
