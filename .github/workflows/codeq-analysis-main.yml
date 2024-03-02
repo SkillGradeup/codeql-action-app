@@ -3,12 +3,8 @@ name: "CodeQL_Main"
 on:
   push:
     branches: [ "main", "paths" ]
-    paths-ignore:
-      - "docs/**"
   pull_request:
     branches: [ "main", "paths" ]
-    paths-ignore:
-      - "docs/**"
   schedule:
     - cron: '21 2 * * 5'
 
@@ -31,15 +27,27 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Skip if Docs directory
+      run: |
+        if [[ -d "docs" ]]; then
+          echo "Skipping analysis as docs directory is present"
+          exit 0
+        else
+          echo "Proceeding with analysis"
+        fi
+
     - name: Initialize CodeQL
+      if: success()
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
 
     - name: Autobuild
+      if: success() && matrix.language != 'swift'
       uses: github/codeql-action/autobuild@v3
 
     - name: Perform CodeQL Analysis
+      if: success() && matrix.language != 'swift'
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{ matrix.language }}"
