@@ -3,12 +3,8 @@ name: "Code_M"
 on:
   push:
     branches: [ "main" ]
-    paths-ignore:
-      - "docs/**"
   pull_request:
     branches: [ "main" ]
-    paths-ignore:
-      - "docs/**"
   schedule:
     - cron: '20 19 * * 6'
 
@@ -28,15 +24,19 @@ jobs:
         language: [ 'javascript-typescript' ]
 
     steps:
-    - name: Check if docs directory modified
-      run: |
-        if git diff --quiet HEAD^ HEAD -- docs; then
-          echo "Skipping analysis as only docs directory modified"
-          exit 0
-        fi
-
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for accurate git diff
+
+    - name: Set docs modified output
+      id: skip_analysis
+      run: |
+        if git diff --quiet HEAD^ HEAD -- docs; then
+          echo "::set-output name=docs_modified::false"
+        else
+          echo "::set-output name=docs_modified::true"
+        fi
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
@@ -47,6 +47,7 @@ jobs:
       uses: github/codeql-action/autobuild@v3
 
     - name: Perform CodeQL Analysis
+      if: steps.skip_analysis.outputs.docs_modified == 'true'
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{ matrix.language }}"
