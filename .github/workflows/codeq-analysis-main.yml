@@ -11,10 +11,14 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ${{ matrix.language == 'swift' && 'macos-latest' || 'ubuntu-latest' }}
-    timeout-minutes: ${{ matrix.language == 'swift' && 120 || 360 }}
+
+    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
     permissions:
+      # required for all workflows
       security-events: write
+
+      # only required for workflows in private repositories
       actions: read
       contents: read
 
@@ -24,30 +28,28 @@ jobs:
         language: [ 'javascript-typescript' ]
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Fetch all history for accurate git diff
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set docs modified output
-      id: skip_analysis
-      run: |
-        if git diff --quiet HEAD^ HEAD -- docs; then
-          echo "::set-output name=docs_modified::false"
-        else
-          echo "::set-output name=docs_modified::true"
-        fi
+      - name: Skip analysis if only docs directory modified
+        if: github.event_name != 'schedule'  # Only check for push/pull_request events
+        run: |
+          if git diff --quiet HEAD^ HEAD -- docs; then
+            echo "Skipping analysis as only docs directory modified"
+            exit 0
+          fi
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
+      # **Remaining steps are preserved for clarity:**
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
 
-    - name: Perform CodeQL Analysis
-      if: steps.skip_analysis.outputs.docs_modified == 'true'
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{ matrix.language }}"
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
