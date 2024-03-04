@@ -2,11 +2,11 @@ name: "Code_M"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "*" ]
     paths-ignore:
       - "docs/**"
   pull_request:
-    branches: [ "main" ]
+    branches: [ "*" ]
     paths-ignore:
       - "docs/**"
   schedule:
