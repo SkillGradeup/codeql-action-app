@@ -27,6 +27,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Copy .codeqlrc file
+      run: |
+        if [ -f .codeqlrc ]; then
+          cp .codeqlrc $GITHUB_WORKSPACE/.codeqlrc
+        else
+          echo "The .codeqlrc file does not exist. Skipping copying."
+        fi
+
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
@@ -35,9 +43,6 @@ jobs:
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
-
-    - name: Copy .codeqlrc into the workflow directory
-      run: cp .codeqlrc $GITHUB_WORKSPACE/.codeqlrc
 
     - name: Perform CodeQL Analysis
       run: |
