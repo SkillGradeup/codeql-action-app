@@ -36,11 +36,18 @@ jobs:
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
 
-    - name: Exclude files within the 'docs' directory
+    - name: Remove 'docs' directory if it exists
       run: |
-        rm -rf docs # Remove docs directory
-        mv .codeqlrc.js .codeqlrc # Rename .codeqlrc.js to .codeqlrc to exclude it
-        mv .github/workflows .github_workflows # Exclude workflows from analysis
+        if [ -d "docs" ]; then
+          rm -rf docs
+        fi
+
+    - name: Exclude specific files/directories from analysis
+      run: |
+        if [ -f ".codeqlrc.js" ]; then
+          mv .codeqlrc.js .codeqlrc
+        fi
+        # Additional exclusions if necessary
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
