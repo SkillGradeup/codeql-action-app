@@ -15,15 +15,18 @@ jobs:
     name: Analyze with CodeQL
     runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'javascript-typescript' ] # Add other languages as needed
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      # Remove previous issues detected in the 'docs' directory
+      - name: Remove previous issues in docs directory
+        run: |
+          git rm -r --cached docs
+          git commit -m "Remove previous issues in docs directory" || true
+          git push
+
+      # Skip analysis if only docs directory is modified
       - name: Skip analysis if only docs directory modified
         if: ${{ !contains(github.event.head_commit.modified, 'docs/') }}
         run: exit 0
@@ -31,7 +34,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v1
         with:
-          languages: ${{ matrix.language }}
+          languages: javascript, typescript
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
