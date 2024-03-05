@@ -16,13 +16,14 @@ on:
     branches: [ "main" ]
     paths-ignore: 
       - "docs/**"
+      - "!docs/**"
 
   pull_request:
     branches: [ "main" ]
     paths-ignore: 
       - "docs/**"
-  schedule:
-    - cron: '24 12 * * 6'
+      - "!docs/**"
+
 
 jobs:
   analyze:
