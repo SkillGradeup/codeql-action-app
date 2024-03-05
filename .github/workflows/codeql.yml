@@ -10,7 +10,7 @@ on:
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze JavaScript
     runs-on: ubuntu-latest
     timeout-minutes: 360
     permissions:
@@ -18,29 +18,14 @@ jobs:
       actions: read
       contents: read
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ "javascript-typescript" ]
-
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Setup Java
-      uses: actions/setup-java@v2
-      with:
-        java-version: '14' # or any other version required by CodeQL
+      uses: actions/checkout@v2
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
-        queries: security-extended,security-and-quality
+      uses: github/codeql-action/init@v1
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
-
-    - name: Perform CodeQL Analysis
+    - name: Analyze JavaScript code
       run: |
-        codeql analyze /language:${{ matrix.language }}
+        codeql analyze /language:javascript --format=sarif-latest . --sarif-category=security-and-quality
+      shell: bash
