@@ -38,7 +38,9 @@ jobs:
 
     - name: Exclude files within the 'docs' directory
       run: |
-        find . -path "./docs/*" -prune -o -name "*.js" -o -name "*.ts" -exec cp {} .codeql-ignore \;
+        rm -rf docs # Remove docs directory
+        mv .codeqlrc.js .codeqlrc # Rename .codeqlrc.js to .codeqlrc to exclude it
+        mv .github/workflows .github_workflows # Exclude workflows from analysis
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
