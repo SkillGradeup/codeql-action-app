@@ -27,6 +27,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Setup Java
+      uses: actions/setup-java@v2
+      with:
+        java-version: '14' # or any other version required by CodeQL
+
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
