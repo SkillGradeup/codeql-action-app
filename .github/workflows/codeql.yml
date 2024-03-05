@@ -22,12 +22,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Exclude docs directory
+        run: |
+          git ls-files | grep -v '^docs/' | xargs git checkout HEAD --
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v1
         with:
           languages: ${{ matrix.language }}
 
-      # Exclude the 'docs' directory from being scanned
       - name: Perform CodeQL Analysis
-        if: ${{ !startsWith(github.event.head_commit.modified, 'docs/') }}  # Skip analysis if the commit modifies files in the 'docs' directory
         uses: github/codeql-action/analyze@v1
