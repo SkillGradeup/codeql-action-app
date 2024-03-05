@@ -23,14 +23,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Skip analysis for docs directory
-        if: ${{ github.event_name != 'schedule' && contains(github.event.head_commit.modified, 'docs/') }}
-        run: exit 0
-
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
+        uses: github/codeql-action/init@v2
         with:
           languages: javascript, typescript
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
+        uses: github/codeql-action/analyze@v2
