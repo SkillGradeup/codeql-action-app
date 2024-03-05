@@ -36,20 +36,11 @@ jobs:
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
 
-    - name: Remove 'docs' directory if it exists
+    - name: Exclude files within the 'docs' directory
       run: |
-        if [ -d "docs" ]; then
-          rm -rf docs
-        fi
-
-    - name: Exclude specific files/directories from analysis
-      run: |
-        if [ -f ".codeqlrc.js" ]; then
-          mv .codeqlrc.js .codeqlrc
-        fi
-        # Additional exclusions if necessary
+        find . -type f -not -path "./docs/*" > included-files.txt
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
+      run: |
+        CODEQL_PATH=$(which codeql)
+        $CODEQL_PATH analyze /language:${{matrix.language}} -ic/included-files.txt
