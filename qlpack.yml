@@ -1,0 +1,5 @@
+name: "CodeQL configuration"
+
+path-problem-prevention:
+  - path: /docs
+    none: true
