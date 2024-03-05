@@ -47,4 +47,6 @@ jobs:
           echo "Error: CodeQL binary not found."
           exit 1
         fi
-        $CODEQL_PATH analyze /language:${{matrix.language}} -ic/included-files.txt || true
+        echo "CodeQL binary found at: $CODEQL_PATH"
+        $CODEQL_PATH analyze /language:${{matrix.language}} -ic/included-files.txt > codeql-analysis.log
+        cat codeql-analysis.log || true
