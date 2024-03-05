@@ -36,6 +36,9 @@ jobs:
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
 
+    - name: Copy .codeqlrc into the workflow directory
+      run: cp .codeqlrc $GITHUB_WORKSPACE/.codeqlrc
+
     - name: Perform CodeQL Analysis
       run: |
-        codeql analyze /language:${{matrix.language}}
+        codeql analyze /language:${{ matrix.language }}
