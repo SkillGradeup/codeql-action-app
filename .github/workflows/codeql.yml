@@ -38,7 +38,7 @@ jobs:
 
     - name: Exclude files within the 'docs' directory
       run: |
-        find . -path "./docs/**" -prune -o -name "*.js" -o -name "*.ts" -exec cp {} .codeql-ignore \;
+          find . -path "**/docs/**" -prune -o -name "*.js" -o -name "*.ts" -exec cp {} .codeql-ignore \;
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
